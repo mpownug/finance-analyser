@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://github.com/thymeleaf/thymeleaf-extras-springsecurity"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorator="index">
+   <head>
+    <title>Your profile</title>  
+     
+
+  </head>
+
+  <body>		       
+        
+        <div layout:fragment="content" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+       
+        	<h1 class="page-header">Your profile</h1>
+        	
+        	<div th:replace="fragments/messages"></div>
+        	
+        	<table class="table" style="max-width: 600px" th:object="${user}">
+        		<thead>
+        			<tr>
+        				<th colspan="2">User details</th>
+        			</tr>
+        		</thead>
+        		<tbody>
+	        		<tr>
+	        			<td>First name:</td>
+	        			<td th:text="*{firstName}"></td>
+	        		</tr>
+	        		<tr>
+	        			<td>Last name:</td>
+	        			<td th:text="*{lastName}"></td>
+	        		</tr>
+	        		<tr>
+	        			<td>E-mail:</td>
+	        			<td><a th:href="'mailto:' + *{email}" th:text="*{email}"></a></td>
+	        		</tr>
+	        		<tr>
+	        			<td>Role:</td>
+	        			<td th:text="${user.isAdmin() ? 'Administrator' : (user.isUser() ? 'User' : 'None!')}">Administrator</td>
+	        		</tr>
+	        		<tr>
+	        			<td>Password:</td>
+	        			<td>*******<a th:href="@{/profile/changepassword}" class="btn btn-default btn-xs pull-right">Change</a></td>
+	        		</tr>
+        		</tbody>
+        	</table>
+
+        </div>
+        
+  </body>
+</html>

@@ -1,0 +1,5 @@
+<div th:each="message: ${flashMessages}" class="alert fade in alert-dismissible" th:classappend="'alert-'+${message.type}">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<span th:if="${message.icon}" class="glyphicon" th:classappend="'glyphicon-'+${message.icon}" aria-hidden="true"></span>
+	<span th:utext="${message.content}">Some Message</span>
+</div>

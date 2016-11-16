@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorator="window">
+  <head>
+    <!-- Custom styles for this template -->
+    <link href="/resources/css/index.css" th:href="@{/resources/css/index.css}" rel="stylesheet" />
+    
+  </head>
+  <body>
+  
+  	<!-- Body Content
+    ================================================== -->
+  	<th:block layout:fragment="body-content">
+  		  	
+		<!-- Top navbar
+	    ================================================== -->
+	    <nav class="navbar navbar-inverse navbar-fixed-top">
+	      <div class="container-fluid">
+	        <div class="navbar-header">
+	          <button sec:authorize="hasRole('USER')" type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+	            <span class="sr-only">Toggle navigation</span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	          </button>
+	          <a class="navbar-brand" th:href="@{/}">Finance Analyzer</a>
+	        </div>
+	        <div sec:authorize="hasRole('USER')" id="navbar" class="navbar-collapse collapse">
+	          <ul class="nav navbar-nav navbar-right">
+		        <li class="navbar-welcome hidden-xs">
+		        	<a sec:authorize="hasRole('USER')" th:text="'Welcome ' + ${#authentication.principal.user.firstName} + '!'">Welcome Username!</a>
+		        </li>
+	            <li class="light-waves"><a th:href="@{/profile}">Profile</a></li>
+	            <li class="light-waves visible-xs-block"><a th:href="@{/overview}">Overview</a></li>
+	            <li class="light-waves visible-xs-block"><a th:href="@{/accounts}">Accounts</a></li>
+	            <li class="light-waves visible-xs-block"><a th:href="@{/categories}">Categories</a></li>
+	            <li class="light-waves visible-xs-block"><a th:href="@{/transactions}">Transactions</a></li>
+	            <li class="light-waves">
+	            	<form id="LogOutForm" th:action="@{/logout}" method="post" class="form-inline"></form>
+	            	<a href="#" onclick="document.getElementById('LogOutForm').submit(); return false;">Logout <span class="glyphicon glyphicon-log-out"></span></a>
+	            </li>
+	          </ul>
+	        </div>
+	      </div>
+	    </nav>
+	    
+	    <!-- Help
+	    ================================================== -->
+	    <div class="modal fade" id="Help" tabindex="-1" role="dialog">
+		  <div class="modal-dialog modal-lg" role="document">
+		    <div class="modal-content">
+		    
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" title="Close" data-tooltip="true" data-placement="right"><span aria-hidden="true">&times;</span></button>
+		      	<a th:href="@{/help}" id="HelpOpenTab" target="_BLANK" class="pull-right" style="margin-right: 10px" title="Open in new tab" data-tooltip="true" data-placement="left"><span class="glyphicon glyphicon-new-window"></span></a>
+		        <h4 class="modal-title"><span class="text-primary glyphicon glyphicon-info-sign"></span> Help</h4>
+		      </div>
+		      
+		      <div id="HelpBody" class="modal-body" layout:fragment="help"></div>
+		      
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		      </div>
+		      
+		    </div>
+		  </div>
+		</div>
+		
+		<!-- Main
+	    ================================================== -->
+	    <div layout:fragment="main" class="container-fluid">
+	      <div class="row">
+	      
+	      	<!-- Left navbar
+	    	================================================== -->
+	        <th:block layout:fragment="left-navbar">
+	        	<div th:replace="fragments/left-navbar"></div>
+	        </th:block>
+	        
+	        <!-- Content
+	    	================================================== -->
+	        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" layout:fragment="content">
+	        	<h1 class="page-header">Dashboard</h1>
+	        	<div th:replace="fragments/messages"></div>
+	        </div>
+	        
+	      </div>
+	    </div>
+	    
+	</th:block>
+ 
+  </body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorator="index">
+	  
+	<head>
+	
+		<title>Overview</title>    
+
+  	</head>
+
+	<body>
+		
+		<div layout:fragment="left-navbar">
+	    
+	    	<div layout:replace="fragments/left-navbar(currentLink='overview')"></div>     
+	    	
+		</div>   
+		
+		<div layout:fragment="content" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+		
+	    	<h1 class="page-header">Overview</h1>
+	    	
+	    	<div class="panel panel-default" style="max-width: 1000px">
+	    		<div class="panel-heading">
+		        	<h4 style="text-align: center">Accounts status</h4>
+				</div>
+  				<div class="panel-body">	
+	  				<div class="row">
+	  					<th:block th:each="accountBalance, accountBalancesStats: ${accountBalances}">
+							<th:block th:if="${accountBalance.balance &gt; 0}">
+								<div class="col-xs-3">
+						       		<div class="panel panel-success">
+						     			<div class="panel-heading" th:text="${accountBalance.account.name}"></div>
+						      			<div th:text="${#numbers.formatDecimal(accountBalance.balance, 0, 2, 'POINT')} + ' zł'" class="panel-body" style="font-weight: bold"></div>
+					   				</div>
+				   				</div>
+					       	</th:block>
+					       	<th:block th:if="${accountBalance.balance &lt; 0}">
+					       		<div class="col-xs-3">
+					       		<div class="panel panel-danger">
+										<div class="panel-heading" th:text="${accountBalance.account.name}"></div>
+										<div th:text="${#numbers.formatDecimal(accountBalance.balance, 0, 2, 'POINT')} + ' zł'" class="panel-body" style="font-weight: bold"></div>
+					    			</div>
+				    			</div>
+					       	</th:block>
+					       	<th:block th:if="${accountBalance.balance == 0}">
+					       		<div class="col-xs-3">
+					       		<div class="panel panel-info">
+										<div class="panel-heading" th:text="${accountBalance.account.name}"></div>
+										<div class="panel-body" style="font-weight: bold">0 zł</div>
+					    			</div>
+				    			</div>
+					       	</th:block>
+						</th:block>
+					</div>
+				</div>
+			</div>
+			
+			<div class="panel panel-default" style="max-width: 1000px">
+				<div class="panel-heading">
+		        	<h4 style="text-align: center">The ratio of expenditure to income in current month</h4>
+				</div>
+				<div class="panel-body">
+					<th:block th:each="accountBalanceBar, accountBalanceBarsStats: ${accountBalanceBars}">
+					
+						<h5 th:text="${accountBalanceBar.account.name}"></h5>
+						<div class="progress" style="max-width: 800px">
+						  <div class="progress-bar progress-bar-success" th:style="'width: ' + ${accountBalanceBar.percentageIncome}  + '%'" th:text="${#numbers.formatDecimal(accountBalanceBar.percentageIncome,0,0,'POINT')} + '%'">
+						  </div>
+						  <div class="progress-bar progress-bar-danger" th:style="'width: ' + ${accountBalanceBar.percentageExpenditure}  + '%'" th:text="${#numbers.formatDecimal(accountBalanceBar.percentageExpenditure,0,0,'POINT')} + '%'">
+						  </div>
+						</div>				
+					</th:block>
+				</div>
+			</div>
+			
+			
+			
+			<div class="panel panel-default" style="max-width: 1000px">
+	    		<div class="panel-heading">
+		        	<h4 style="text-align: center">Income/expenditure by categories</h4>
+				</div>
+  				<div class="panel-body">	
+	  				<div class="row">
+						<div class="col-xs-6">
+				       		<div class="panel panel-default">
+			                    <div class="panel-heading">Income structure</div>
+			                    <div class="panel-body">
+									<canvas class="panel-body" id="chart-area-one" width="300" height="300"/>
+								</div>    
+			                </div>
+		   				</div>
+			       		<div class="col-xs-6">
+				       		<div class="panel panel-default">
+				       			<div class="panel-heading">Expenditure structure</div>
+			                    <div class="panel-body">
+									<canvas class="panel-body" id="chart-area-two" width="300" height="300"/>
+								</div>
+			    			</div>
+			    		</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="panel panel-default" style="max-width: 1000px">
+	    		<div class="panel-heading">
+		        	<h4 style="text-align: center">Total income/expenditure from the previous week</h4>
+				</div>
+  				<div class="panel-body">	
+					<canvas class="panel-body" id="chart-area-three" height="450" width="600"></canvas>
+				</div>
+			</div>
+	        
+		</div>
+		
+		<th:block layout:fragment="javascript">
+			<script type="text/javascript" src="/resources/js/bootstrap-datetimepicker.min.js" th:src="@{/resources/js/bootstrap-datetimepicker.min.js}"></script>
+			<script type="text/javascript" src="/resources/js/Chart.js" th:src="@{/resources/js/Chart.js}"></script>
+			<script>
+				$(document).ready(function() {
+				    $.ajax({
+						type: "GET",
+						headers: {"X-My-Custom-Header": ""},
+				        url: "http://localhost:8080/incomePieChart"
+				    }).then(function(data) {
+						var ctx = document.getElementById("chart-area-one").getContext("2d");
+						window.myPie = new Chart(ctx).Pie(data);
+				    });
+				});	
+				
+				$(document).ready(function() {
+				    $.ajax({
+						type: "GET",
+						headers: {"X-My-Custom-Header": ""},
+				        url: "http://localhost:8080/expenditurePieChart"
+				    }).then(function(data) {
+						var ctx = document.getElementById("chart-area-two").getContext("2d");
+						window.myPie = new Chart(ctx).Pie(data);
+				    });
+				});	
+				
+				$(document).ready(function() {
+				    $.ajax({
+						type: "GET",
+						headers: {"X-My-Custom-Header": ""},
+				        url: "http://localhost:8080/lineChart"
+				    }).then(function(data) {
+						var ctx = document.getElementById("chart-area-three").getContext("2d");
+						window.myLine = new Chart(ctx).Line(data, {responsive: true} );
+				    });
+				});	
+			</script>
+        </th:block>	      
+	</body>
+  
+</html>

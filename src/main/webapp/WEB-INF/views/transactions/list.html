@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorator="index">
+
+	<head>
+	
+		<title>Transactions</title>    
+
+  	</head>
+
+	<body>
+		<th:block layout:fragment="modals">
+		
+			<div class="modal fade" id="RemoveWarning" tabindex="-1" role="dialog">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			    
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title" id="myModalLabel">Warning</h4>
+			      </div>
+			      
+			      <div class="modal-body">
+			        Are you sure you want to delete transactions titled <strong>Title</strong>?
+			      </div>
+			      
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+			        <a><button type="button" class="btn btn-danger">Yes</button></a>
+			      </div>
+			      
+			    </div>
+			  </div>
+			</div>
+			
+		</th:block>
+
+	    <div layout:fragment="left-navbar">
+	    
+	    	<div layout:replace="fragments/left-navbar(currentLink='transactions')"></div>     
+	    	
+		</div>    
+		
+		<div layout:fragment="content" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+		
+	    	<h1 class="page-header">Transactions</h1>
+	    	<div th:replace="fragments/messages"></div>
+	    	
+	    	<div><a th:href="@{/transactions/new}" class="btn btn-primary">Add new transaction</a></div>
+	    	<div class="table-responsive">
+             	<table class="table table-striped table-centered">
+	              	<thead>
+		                <tr class="text-nowrap">
+						  <th>#</th>
+						  <th>Actions</th>
+						  <th>Date</th>
+						  <th>Title</th>
+						  <th>Amount</th>
+						  <th>Category</th>
+		                  <th>Account</th>
+		                  <th>Comment</th>
+		                </tr>
+	              	</thead>
+	                <tbody>
+		                <tr th:each="transaction, transactionsStats: ${transactions}">
+						  <td th:text="${transactionsStats.count}"></td>
+						  <td style="white-space: nowrap">
+		                  	<a title="Edit transaction" data-tooltip="true" th:href="@{/transactions/edit/{id}(id=${transaction.id})}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
+		                  	<button data-action="/transactions/remove/1" th:attr="data-action=@{/transactions/delete/{id}(id=${transaction.id})}" data-tooltip="true" title="Delete transaction" data-toggle="modal" data-target="#RemoveWarning" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
+		                  </td>
+		                  <td th:text="${#dates.format(transaction.date, 'EEE, dd MMMM yyyy')}"></td>
+		                  <td th:text="${transaction.title}"></td>
+		                  <td th:if="${transaction.type == 1}" th:text="${#numbers.formatDecimal(transaction.amount, 0, 2, 'POINT')} + ' zł'"></td>
+		                  <td th:if="${transaction.type == 0}" th:text="'-' + ${#numbers.formatDecimal(transaction.amount, 0, 2, 'POINT')} + ' zł'"></td>
+		                  <td th:text="${transaction.category.name}"></td>
+		                  <td th:text="${transaction.account.name}"></td>
+		                  <td th:text="${transaction.comment}"></td>
+		                </tr>
+		                
+		                <tr th:if="${#lists.isEmpty(transactions)}">
+		                	<td colspan="8" class="h4">No transactions to display.</td>
+		                </tr>
+	              	</tbody>
+            	</table>
+          	</div> 	   
+		</div>
+		
+		<th:block layout:fragment="javascript">
+        	<script type="text/javascript">
+			    $(function(){
+			    	$('[data-tooltip="true"]').tooltip({trigger: "hover"});
+			    	
+			    	$('#RemoveWarning').on('show.bs.modal', function (event) {
+			    		  var button = $(event.relatedTarget); // Button that triggered the modal
+			    		  var url = button.data('action');
+			    		  var modal = $(this);
+			    		  modal.find('.modal-footer a').attr("href", url);
+			    		  modal.find('.modal-body strong').html(button.parent().next().next().html());
+			    	})
+			    });
+				
+			</script>
+        </th:block>
+		 
+	</body>
+  
+</html>
