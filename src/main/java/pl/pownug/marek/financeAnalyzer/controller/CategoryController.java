@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import pl.pownug.marek.financeAnalyzer.domain.Category;
@@ -27,10 +24,11 @@ public class CategoryController {
 	CategoryService categoryService;
 	
 	@RequestMapping(value = "/categories", method = RequestMethod.GET)
-	public String categories(ModelMap model) {
-		List<Category> categiries = categoryService.findUserCategories(User.getAuthenticatedUser());
-		model.addAttribute("categories", categiries);
-		return "categories/list";
+	public @ResponseBody
+	List <Category> categories(@RequestParam(required=false) ModelMap model) {
+
+		List<Category> categories = categoryService.findUserCategories(User.getAuthenticatedUser());
+		return categories;
 	}
 	
 	@RequestMapping(value = "/categories/add", method = RequestMethod.GET)
