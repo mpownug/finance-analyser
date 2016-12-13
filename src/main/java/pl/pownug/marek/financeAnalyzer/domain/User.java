@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Email;
@@ -154,8 +155,7 @@ public class User  implements Comparable<User>{
 			}
 		}
 	}
-	
-	
+
 	static public User getAuthenticatedUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if(auth.isAuthenticated()) {
