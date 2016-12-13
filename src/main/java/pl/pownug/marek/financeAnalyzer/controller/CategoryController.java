@@ -23,10 +23,9 @@ public class CategoryController {
 	@Autowired
 	CategoryService categoryService;
 	
+	@CrossOrigin(origins = "http://localhost:8080")
 	@RequestMapping(value = "/categories", method = RequestMethod.GET)
-	public @ResponseBody
-	List <Category> categories(@RequestParam(required=false) ModelMap model) {
-
+	public @ResponseBody List <Category> categories() {
 		List<Category> categories = categoryService.findUserCategories(User.getAuthenticatedUser());
 		return categories;
 	}
