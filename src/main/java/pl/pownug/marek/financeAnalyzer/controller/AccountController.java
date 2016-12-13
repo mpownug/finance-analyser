@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import pl.pownug.marek.financeAnalyzer.domain.Account;
@@ -26,24 +28,24 @@ public class AccountController {
 	@Autowired
 	AccountService accountService;
 	
+	@CrossOrigin(origins = "http://localhost:8080")
 	@RequestMapping(value = "/accounts", method = RequestMethod.GET)
-	public String accounts(ModelMap model) {
+	public @ResponseBody List<Account> accounts() {
 		List<Account> accounts = accountService.findUserAccounts(User.getAuthenticatedUser());
-		model.addAttribute("accounts", accounts);
-		return "accounts/list";
+		return accounts;
 	}
 	
+	@CrossOrigin(origins = "http://localhost:8080")
 	@RequestMapping(value = "/accounts/add", method = RequestMethod.GET)
-	public String newAccount(ModelMap model) {
-		model.addAttribute("account", new Account());
-		return "accounts/editor";
+	public @ResponseBody Account newAccount() {
+		return new Account();
 	}
 	
+	@CrossOrigin(origins = "http://localhost:8080")
 	@RequestMapping(value = "/accounts/edit/{id}", method = RequestMethod.GET)
-	public String editAccount(@PathVariable int id, ModelMap model) {
+	public @ResponseBody Account editAccount(@PathVariable int id) {
 		Account account = accountService.findById(id);
-		model.addAttribute("account", account);
-		return "accounts/editor";
+		return account;
 	}
 	
 	@RequestMapping(value = "/accounts/save", method = RequestMethod.POST)

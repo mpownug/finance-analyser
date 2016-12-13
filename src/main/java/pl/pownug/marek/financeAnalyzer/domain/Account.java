@@ -1,13 +1,18 @@
 package pl.pownug.marek.financeAnalyzer.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name="account")
@@ -20,7 +25,9 @@ public class Account {
 	@Size(min=3, max=30)
 	private String name;
 	
-	@ManyToOne(fetch=FetchType.LAZY, optional=false)
+	@ManyToOne(cascade={CascadeType.ALL})
+	@Fetch(FetchMode.SELECT)
+	@JsonBackReference
 	private User user;
 
 	public Integer getId() {
