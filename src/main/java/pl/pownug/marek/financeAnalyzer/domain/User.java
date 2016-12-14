@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -47,6 +48,7 @@ public class User  implements Comparable<User>{
 			fetch=FetchType.EAGER, 
 			orphanRemoval=true
 		)
+	@JsonBackReference
 	@OnDelete(action=OnDeleteAction.CASCADE)
 	private Set<UserRole> roles = null;
 	
@@ -55,8 +57,7 @@ public class User  implements Comparable<User>{
 	private String firstName;
 	
 	@NotNull @NotBlank
-	@Size(min=2, max=30)
-	private String lastName;
+	@Size(min=2, max=30)private String lastName;
 
 	public Integer getId() {
 		return id;

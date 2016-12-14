@@ -45,6 +45,7 @@ public class AccountService {
     	for (Transaction transaction : accountTransactions) {
 			transactionRepository.delete(transaction);
 		}
+
     	accountRepository.delete(account);
     }
 	

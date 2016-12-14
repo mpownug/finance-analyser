@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import pl.pownug.marek.financeAnalyzer.domain.User;
@@ -18,24 +16,22 @@ import pl.pownug.marek.financeAnalyzer.service.UsersService;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_USER')")
+@CrossOrigin(origins = "http://localhost:8080")
 public class ProfileController {
 
 	@Autowired
 	UsersService usersService;
 	
 	@RequestMapping(value = "/profile", method = RequestMethod.GET)
-	public String profile(ModelMap model)
-	{	
-		
-		model.addAttribute("user", User.getAuthenticatedUser());
-		return "profile/view";
+	public @ResponseBody User profile()
+	{
+		User user = User.getAuthenticatedUser();
+		return user;
 	}
 	
-	@RequestMapping(value = "/profile/changepassword", method = RequestMethod.GET)
-	public String changePassword()
-	{	
-		return "profile/change-password";
-	}
+//	@RequestMapping(value = "/profile/changepassword", method = RequestMethod.GET)
+//	public String changePassword()
+//	{return "profile/change-password";}
 	
 	@RequestMapping(value = "/profile/changepassword", method = RequestMethod.POST)
 	public String changePassword(final RedirectAttributes redirectAttributes,

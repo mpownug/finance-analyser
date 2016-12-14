@@ -9,11 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import pl.pownug.marek.financeAnalyzer.domain.Account;
@@ -26,6 +22,7 @@ import pl.pownug.marek.financeAnalyzer.service.CategoryService;
 import pl.pownug.marek.financeAnalyzer.service.TransactionService;
 
 @Controller
+@CrossOrigin(origins = "http://localhost:8080")
 public class TransactionController {
 	
 	@Autowired
@@ -38,38 +35,36 @@ public class TransactionController {
 	AccountService accountService;
 	
 	@RequestMapping(value = "/transactions", method = RequestMethod.GET)
-	public String transactions(ModelMap model) {
+	public @ResponseBody List<Transaction> transactions() {
 		List<Transaction> transactions = transactionService.findUserTransactions(User.getAuthenticatedUser());
 		transactionService.LoadCategory(transactions);
 		transactionService.LoadAccount(transactions);
-		model.addAttribute("transactions", transactions);
-		return "transactions/list";
+
+		return transactions;
 	}
 	
 	@RequestMapping(value = "/transactions/new", method = RequestMethod.GET)
-	public String newTransactions(ModelMap model)
+	public @ResponseBody Transaction newTransactions()
 	{			
 		Transaction transaction = new Transaction();
-		model.addAttribute("transaction", transaction);
-		model.addAttribute("categories", categoryService.findUserCategories(User.getAuthenticatedUser()));
-		model.addAttribute("accounts", accountService.findUserAccounts(User.getAuthenticatedUser()));
-		return "transactions/editor";
+
+		return transaction;
 	}
 	
 	@RequestMapping(value = "/transactions/edit/{id}", method = RequestMethod.GET)
-	public String editTransaction(@PathVariable int id, ModelMap model)
+	public @ResponseBody Transaction editTransaction(@PathVariable int id, ModelMap model)
 	{
 		Transaction transaction = transactionService.findById(id);
 		transactionService.loadCategory(transaction);
 		transactionService.loadAccount(transaction);
 		
-		model.addAttribute("transaction", transaction);
-		model.addAttribute("formattedDate", transaction.getFormattedDate());
-		model.addAttribute("selectedCategory", transaction.getCategory().getId());
-		model.addAttribute("selectedAccount", transaction.getAccount().getId());
-		model.addAttribute("categories", categoryService.findUserCategories(User.getAuthenticatedUser()));
-		model.addAttribute("accounts", accountService.findUserAccounts(User.getAuthenticatedUser()));
-		return "transactions/editor";
+//		model.addAttribute("transaction", transaction);
+//		model.addAttribute("formattedDate", transaction.getFormattedDate());
+//		model.addAttribute("selectedCategory", transaction.getCategory().getId());
+//		model.addAttribute("selectedAccount", transaction.getAccount().getId());
+//		model.addAttribute("categories", categoryService.findUserCategories(User.getAuthenticatedUser()));
+//		model.addAttribute("accounts", accountService.findUserAccounts(User.getAuthenticatedUser()));
+		return transaction;
 	}
 	
 	@RequestMapping(value = "/transactions/save", method = RequestMethod.POST)
@@ -114,14 +109,14 @@ public class TransactionController {
 	}
 	
 	@RequestMapping(value = "/transactions/delete/{id}", method = RequestMethod.GET)
-	public String deleteTransaction(@PathVariable int id, final RedirectAttributes redirectAttributes) {
+	public @ResponseBody Transaction deleteTransaction(@PathVariable int id) {
 		Transaction transaction = transactionService.findById(id);
 		transactionService.deleteTransaction(transaction);
 		
-		List<Message> messages = new ArrayList<Message>();
-		messages.add(new Message("success", "Transaction titled <strong>" + transaction.getTitle() + "</strong> has been successfully removed.", "trash"));
-		
-		redirectAttributes.addFlashAttribute("flashMessages", messages);
-		return "redirect:/transactions";
+//		List<Message> messages = new ArrayList<Message>();
+//		messages.add(new Message("success", "Transaction titled <strong>" + transaction.getTitle() + "</strong> has been successfully removed.", "trash"));
+//
+//		redirectAttributes.addFlashAttribute("flashMessages", messages);
+		return transaction;
 	}
 }

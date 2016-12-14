@@ -23,25 +23,23 @@ import pl.pownug.marek.financeAnalyzer.helpers.Message;
 import pl.pownug.marek.financeAnalyzer.service.AccountService;
 
 @Controller
+@CrossOrigin(origins = "http://localhost:8080")
 public class AccountController {
 
 	@Autowired
 	AccountService accountService;
-	
-	@CrossOrigin(origins = "http://localhost:8080")
+
 	@RequestMapping(value = "/accounts", method = RequestMethod.GET)
 	public @ResponseBody List<Account> accounts() {
 		List<Account> accounts = accountService.findUserAccounts(User.getAuthenticatedUser());
 		return accounts;
 	}
-	
-	@CrossOrigin(origins = "http://localhost:8080")
+
 	@RequestMapping(value = "/accounts/add", method = RequestMethod.GET)
 	public @ResponseBody Account newAccount() {
 		return new Account();
 	}
-	
-	@CrossOrigin(origins = "http://localhost:8080")
+
 	@RequestMapping(value = "/accounts/edit/{id}", method = RequestMethod.GET)
 	public @ResponseBody Account editAccount(@PathVariable int id) {
 		Account account = accountService.findById(id);
@@ -75,14 +73,10 @@ public class AccountController {
 	}
 	
 	@RequestMapping(value = "/accounts/delete/{id}", method = RequestMethod.GET)
-	public String deleteAccount(@PathVariable int id, final RedirectAttributes redirectAttributes) {
+	public @ResponseBody Account deleteAccount(@PathVariable int id) {
 		Account account = accountService.findById(id);
 		accountService.deleteAccount(account);
-		
-		List<Message> messages = new ArrayList<Message>();
-		messages.add(new Message("success", "Category named <strong>" + account.getName() + "</strong> has been successfully removed.", "trash"));
-		
-		redirectAttributes.addFlashAttribute("flashMessages", messages);
-		return "redirect:/accounts";
+
+		return account;
 	}
 }

@@ -13,11 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import pl.pownug.marek.financeAnalyzer.domain.User;
@@ -27,32 +23,30 @@ import pl.pownug.marek.financeAnalyzer.service.UsersService;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_ADMIN')")
+@CrossOrigin(origins = "http://localhost:8080")
 public class UsersController {
 	
 	@Autowired
 	UsersService usersService;	
 	
 	@RequestMapping(value = "/users",  method = RequestMethod.GET)
-	public String usersList(ModelMap model) 
+	public @ResponseBody Set<User> usersList()
 	{
 		Set<User> users = usersService.findAllUsers();
-		model.addAttribute("users", users);
-		return "users/list";
+
+		return users;
 	}
 	
 	@RequestMapping(value = "/users/new")
-	public String newUser(ModelMap model)
-	{			
-		model.addAttribute("user", new User());
-		return "users/editor";
-	}
+	public @ResponseBody User newUser()
+		{
+			return new User();}
 	
 	@RequestMapping(value = "/users/edit/{id}", method = RequestMethod.GET)
-	public String editUser(@PathVariable int id, ModelMap model)
+	public @ResponseBody User editUser(@PathVariable int id)
 	{
 		User user = usersService.findById(id);
-		model.addAttribute("user", user);
-		return "users/editor";
+		return user;
 	}
 	
 	@RequestMapping(value = "/users/save", method = RequestMethod.POST)

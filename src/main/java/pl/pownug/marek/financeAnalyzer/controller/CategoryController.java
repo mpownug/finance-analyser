@@ -18,31 +18,30 @@ import pl.pownug.marek.financeAnalyzer.helpers.Message;
 import pl.pownug.marek.financeAnalyzer.service.CategoryService;
 
 @Controller
+@CrossOrigin(origins = "http://localhost:8080")
 public class CategoryController {
 
 	@Autowired
 	CategoryService categoryService;
 	
-	@CrossOrigin(origins = "http://localhost:8080")
+
 	@RequestMapping(value = "/categories", method = RequestMethod.GET)
 	public @ResponseBody List <Category> categories() {
 		List<Category> categories = categoryService.findUserCategories(User.getAuthenticatedUser());
 		return categories;
 	}
-	
+
 	@RequestMapping(value = "/categories/add", method = RequestMethod.GET)
-	public String newCategory(ModelMap model) {
+	public @ResponseBody Category newCategory() {
 		Category category = new Category();
 		category.setDeleted(false);
-		model.addAttribute("category", category);
-		return "categories/editor";
+		return category;
 	}
 	
 	@RequestMapping(value = "/categories/edit/{id}", method = RequestMethod.GET)
-	public String editCategory(@PathVariable int id, ModelMap model) {
+	public @ResponseBody Category editCategory(@PathVariable int id) {
 		Category category = categoryService.findById(id);
-		model.addAttribute("category", category);
-		return "categories/editor";
+		return category;
 	}
 	
 	@RequestMapping(value = "/categories/save", method = RequestMethod.POST)
@@ -73,14 +72,10 @@ public class CategoryController {
 	}
 	
 	@RequestMapping(value = "/categories/delete/{id}", method = RequestMethod.GET)
-	public String deleteCategory(@PathVariable int id, final RedirectAttributes redirectAttributes) {
+	public @ResponseBody Category deleteCategory(@PathVariable int id, final RedirectAttributes redirectAttributes) {
 		Category category = categoryService.findById(id);
 		categoryService.deleteCategoryById(category.getId());
-		
-		List<Message> messages = new ArrayList<Message>();
-		messages.add(new Message("success", "Category named <strong>" + category.getName() + "</strong> has been successfully removed.", "trash"));
-		
-		redirectAttributes.addFlashAttribute("flashMessages", messages);
-		return "redirect:/categories";
+
+		return category;
 	}
 }

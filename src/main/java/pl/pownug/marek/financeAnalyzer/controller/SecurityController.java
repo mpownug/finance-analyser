@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +17,7 @@ import pl.pownug.marek.financeAnalyzer.helpers.Message;
 
 @Controller
 public class SecurityController 
-{	
+{
 	@RequestMapping(value = "/login")
 	public String login(ModelMap model, HttpServletRequest request) 
 	{
@@ -38,4 +40,6 @@ public class SecurityController
 	public String accesssDenied() {
 		return "403";
 	}
+
+
 }

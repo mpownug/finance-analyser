@@ -7,12 +7,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import org.springframework.web.bind.annotation.ResponseBody;
 import pl.pownug.marek.financeAnalyzer.charts.AccountBalance;
 import pl.pownug.marek.financeAnalyzer.charts.AccountBalanceBar;
 import pl.pownug.marek.financeAnalyzer.domain.Account;
+import pl.pownug.marek.financeAnalyzer.domain.Overview;
 import pl.pownug.marek.financeAnalyzer.domain.Transaction;
 import pl.pownug.marek.financeAnalyzer.domain.User;
 import pl.pownug.marek.financeAnalyzer.service.AccountService;
@@ -20,6 +23,7 @@ import pl.pownug.marek.financeAnalyzer.service.CategoryService;
 import pl.pownug.marek.financeAnalyzer.service.TransactionService;
 
 @Controller
+@CrossOrigin(origins = "http://localhost:8080")
 public class OverviewController {
 	
 	@Autowired
@@ -31,14 +35,9 @@ public class OverviewController {
 	@Autowired
 	CategoryService categoryService;
 
-	@RequestMapping(value = "/")
-	public String index() 
-	{
-		return "redirect:/overview";
-	}
-	
 	@RequestMapping(value = "/overview", method = RequestMethod.GET)
-	public String index(ModelMap model) 
+	public @ResponseBody
+	Overview index()
 	{		
 		
 		List<Account> accounts = accountService.findUserAccounts(User.getAuthenticatedUser());
@@ -61,10 +60,12 @@ public class OverviewController {
 			accountBalance.setBalance(sumTransactions(accountsTransations));
 			accountBalances.add(accountBalance);
 		}
-		model.addAttribute("accountBalanceBars", accountBalanceBars);
-		model.addAttribute("accountBalances", accountBalances);
-		model.addAttribute("accounts", accountService.findUserAccounts(User.getAuthenticatedUser()));
-		return "overview/overview";
+
+		Overview overview = new Overview();
+		overview.setAccountBalanceBars(accountBalanceBars);
+		overview.setAccountBalances(accountBalances);
+		overview.setAccounts(accounts);
+		return overview;
 	}
 	
 	private float sumTransactions(List <Transaction> transactions) {
